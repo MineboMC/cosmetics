@@ -41,16 +41,15 @@ public class CosmeticButton extends Button {
 
     private List<String> getDescription(Player player) {
         List<String> loreList = new ArrayList<>();
-        loreList.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "-------------------------------");
+        loreList.add("");
         loreList.addAll(cosmetic.getDescription());
         loreList.add("");
         final CosmeticPlayer cosmeticPlayer = CosmeticHandler.getPlayer(player);
         loreList.add(cosmetic.hasPermission(player)
                 ? (cosmeticPlayer.getSelectedCosmetics().contains(cosmetic)
-                ? (ChatColor.RED + "Click to deselect this Cosmetic!")
-                : (ChatColor.GREEN + "Click to select this Cosmetic!"))
-                : (ChatColor.RED + "You do not have permission for this cosmetic!"));
-        loreList.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "-------------------------------");
+                ? (ChatColor.RED + "Click to disable this cosmetic!")
+                : (ChatColor.GREEN + "Click to enable this cosmetic!"))
+                : (ChatColor.RED + "You cannot use this cosmetic!"));
         return loreList;
     }
 
@@ -70,7 +69,7 @@ public class CosmeticButton extends Button {
         final CosmeticPlayer cosmeticPlayer = CosmeticHandler.getPlayer(player);
 
         if (!cosmetic.hasPermission(player)) {
-            player.sendMessage(ChatColor.RED + "You don't have access to this cosmetic.");
+            player.sendMessage(ChatColor.RED + "You cannot use this cosmetic.");
             return;
         }
         final Cosmetic selectedFromCategory = cosmeticPlayer.getCosmeticFromCategory(cosmeticType);

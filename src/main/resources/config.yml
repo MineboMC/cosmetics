@@ -1,0 +1,8 @@
+# Database Connection to save/load cosmetic selections per user.
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  db: 0
+  use-auth: false
+  username: ""
+  password: ""

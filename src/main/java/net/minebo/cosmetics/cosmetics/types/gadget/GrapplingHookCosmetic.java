@@ -9,6 +9,8 @@ import java.util.*;
 import org.bukkit.event.player.*;
 import org.bukkit.*;
 import org.bukkit.event.*;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public class GrapplingHookCosmetic extends Cosmetic
 {
@@ -69,17 +71,25 @@ public class GrapplingHookCosmetic extends Cosmetic
         player.getInventory().clear(3);
         player.updateInventory();
     }
-    
+
     @EventHandler
     public void onGrappleHookUse(final PlayerFishEvent e) {
-        if (!e.getPlayer().getItemInHand().isSimilar(this.itemStack)) {
-            return;
-        }
-        if (!e.getState().equals(PlayerFishEvent.State.FAILED_ATTEMPT)) {
-            return;
-        }
-        e.getPlayer().setVelocity(e.getPlayer().getLocation().getDirection().multiply(5.0));
-        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.0f);
-        e.getPlayer().updateInventory();
+        Player player = e.getPlayer();
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+
+        // Only proceed if correct item is used
+        if (!handItem.isSimilar(this.itemStack)) return;
+
+        // Only proceed if reeling in
+        if (e.getState() != PlayerFishEvent.State.REEL_IN) return;
+
+        // Pull player toward hook
+        Location hookLocation = e.getHook().getLocation();
+        Location playerLocation = player.getLocation();
+        Vector direction = hookLocation.toVector().subtract(playerLocation.toVector()).normalize().multiply(3);
+        direction.setY(0.7); // Upward boost
+
+        player.setVelocity(direction);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.0f);
     }
 }

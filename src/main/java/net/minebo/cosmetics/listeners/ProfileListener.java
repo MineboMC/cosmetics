@@ -11,14 +11,18 @@ public class ProfileListener implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        CosmeticHandler.cosmeticPlayers.add(new CosmeticPlayer(event.getPlayer().getUniqueId()));
+        CosmeticPlayer cosmeticPlayer = new CosmeticPlayer(event.getPlayer().getUniqueId());
+        cosmeticPlayer.loadFromRedis(event.getPlayer()); // Load previously selected cosmetics
+        CosmeticHandler.cosmeticPlayers.add(cosmeticPlayer);
     }
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
         CosmeticPlayer cosmeticPlayer = CosmeticHandler.getPlayer(event.getPlayer());
-        cosmeticPlayer.getSelectedCosmetics().clear();
-        CosmeticHandler.cosmeticPlayers.remove(cosmeticPlayer);
+        if (cosmeticPlayer != null) {
+            cosmeticPlayer.saveToRedis(); // Save selected cosmetics
+            cosmeticPlayer.getSelectedCosmetics().clear();
+            CosmeticHandler.cosmeticPlayers.remove(cosmeticPlayer);
+        }
     }
-
 }

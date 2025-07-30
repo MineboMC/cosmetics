@@ -1,19 +1,29 @@
 package net.minebo.cosmetics;
 
 import net.minebo.cobalt.menu.MenuHandler;
+import net.minebo.cobalt.redis.RedisDatabase;
 import net.minebo.cosmetics.cosmetics.CosmeticHandler;
+import net.minebo.cosmetics.cosmetics.player.CosmeticPlayer;
 import net.minebo.cosmetics.listeners.ProfileListener;
 import net.minebo.cosmetics.task.CosmeticTickTask;
 import org.bukkit.plugin.java.*;
 import org.bukkit.*;
+import redis.clients.jedis.JedisPool;
 
 public class Cosmetics extends JavaPlugin {
 
     public static Cosmetics instance;
 
+    public static RedisDatabase database;
+    public static JedisPool jedisPool;
+
     @Override
     public void onEnable() {
         instance = this;
+        saveDefaultConfig();
+
+        database = (getConfig().getBoolean("redis.use-auth") ? new RedisDatabase("cosmetics", getConfig().getString("redis.host"), getConfig().getInt("redis.port"), getConfig().getString("redis.username"), getConfig().getString("redis.password"), getConfig().getInt("redis.db")) : new RedisDatabase("cosmetics", getConfig().getString("redis.host"), getConfig().getInt("redis.port"), getConfig().getInt("redis.db")));
+        jedisPool = RedisDatabase.getJedisPool("cosmetics");
 
         MenuHandler.init(this);
 
@@ -25,6 +35,6 @@ public class Cosmetics extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        CosmeticHandler.cosmeticPlayers.forEach(cosmeticPlayer -> cosmeticPlayer.getSelectedCosmetics().forEach(cosmetic -> cosmetic.remove(cosmeticPlayer.getPlayer())));
+        CosmeticHandler.cosmeticPlayers.forEach(CosmeticPlayer::saveToRedis);
     }
 }
