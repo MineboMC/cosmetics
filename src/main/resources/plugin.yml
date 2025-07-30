@@ -2,6 +2,6 @@ name: Cosmetics
 version: '1.0-DEV'
 description: "The cosmetics plugin for Minebo."
 authors: ["Ian Rich"]
-website: "https://github.com/MineboMC/Lobby"
+website: "https://github.com/MineboMC/Cosmetics"
 main: net.minebo.cosmetics.Cosmetics
 api-version: '1.20'
