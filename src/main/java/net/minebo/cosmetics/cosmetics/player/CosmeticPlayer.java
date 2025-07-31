@@ -59,6 +59,7 @@ public class CosmeticPlayer {
         for (CosmeticType type : CosmeticType.values()) {
             Cosmetic cosmetic = getCosmeticFromCategory(type);
             String key = "cosmetic." + uuid + ".selected." + type.name().toLowerCase();
+            if(type == CosmeticType.GADGET) return;
             if (cosmetic != null) {
                 Cosmetics.database.setData(Cosmetics.jedisPool, key, cosmetic.getName());
             } else {
@@ -71,6 +72,8 @@ public class CosmeticPlayer {
     public void loadFromRedis(Player player) {
         for (CosmeticType type : CosmeticType.values()) {
             String key = "cosmetic." + uuid + ".selected." + type.name().toLowerCase();
+
+            if(type == CosmeticType.GADGET) return;
 
             if (Cosmetics.database.ifExists(Cosmetics.jedisPool, key)) {
                 String cosmeticName = Cosmetics.database.getData(Cosmetics.jedisPool, key);
